@@ -22,8 +22,13 @@ dependencies {
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
+
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("io.projectreactor:reactor-test")
+	testImplementation("io.projectreactor:reactor-test:3.4.3")
+	testImplementation("io.kotest:kotest-assertions-core-jvm:4.3.2")
+	testImplementation("io.kotest:kotest-runner-junit5-jvm:4.3.2")
+	testImplementation("com.ninja-squad:springmockk:2.0.3")
 }
 
 tasks.withType<KotlinCompile> {

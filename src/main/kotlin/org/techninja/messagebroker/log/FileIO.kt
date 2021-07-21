@@ -1,5 +1,6 @@
 package org.techninja.messagebroker.log
 
+import org.techninja.messagebroker.exceptions.EmptyFileException
 import java.io.File
 import java.io.RandomAccessFile
 
@@ -11,6 +12,10 @@ class FileIO(
 
     fun getLastLine(): String {
         val fileLength = randomAccessFile.length() - 1
+        if (fileLength < 0) {
+            throw EmptyFileException()
+        }
+
         val sb = StringBuilder()
         for (filePointer in (randomAccessFile.length() - 1) downTo 0) {
             randomAccessFile.seek(filePointer)

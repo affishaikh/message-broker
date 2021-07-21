@@ -1,19 +1,33 @@
 package org.techninja.messagebroker.log
 
+import org.springframework.stereotype.Component
+import org.techninja.messagebroker.exceptions.EmptyFileException
 import java.io.File
 
-class AppendOnlyLog  {
+const val LOG_FILES_PATH = "./logs/"
+
+@Component
+class AppendOnlyLog {
 
     fun append(logName: String, data: String) {
-        val fileIO = FileIO(File(logName))
-        val lastLine = fileIO.getLastLine()
-        val currentOffset = Record.from(lastLine).offset
-        val record = "$currentOffset $data"
+        val fileIO = FileIO(File(LOG_FILES_PATH + logName))
+        val currentOffset = try {
+            val lastLine = fileIO.getLastLine()
+            Record.from(lastLine).offset + 1
+        } catch (e: EmptyFileException) {
+            0
+        }
+
+        val record = if (currentOffset == 0L) {
+            "$currentOffset $data"
+        } else {
+            "\n$currentOffset $data"
+        }
         fileIO.appendToFile(record)
     }
 
     fun create(logName: String): Boolean {
-        return File(logName).createNewFile()
+        return File(LOG_FILES_PATH + logName).createNewFile()
     }
 }
 
