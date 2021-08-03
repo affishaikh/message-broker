@@ -6,20 +6,18 @@ import java.io.RandomAccessFile
 
 class FileIO(
     private val file: File
-) {
-
-    private val randomAccessFile = RandomAccessFile(file, "r")
+) : RandomAccessFile(file, "r") {
 
     fun getLastLine(): String {
-        val fileLength = randomAccessFile.length() - 1
+        val fileLength = this.length() - 1
         if (fileLength < 0) {
             throw EmptyFileException()
         }
 
         val sb = StringBuilder()
-        for (filePointer in (randomAccessFile.length() - 1) downTo 0) {
-            randomAccessFile.seek(filePointer)
-            val readByte = randomAccessFile.readByte().toInt()
+        for (filePointer in (this.length() - 1) downTo 0) {
+            this.seek(filePointer)
+            val readByte = this.readByte().toInt()
             if (readByte == 0xA) {
                 break
             } else if (readByte == 0xD) {
@@ -35,5 +33,27 @@ class FileIO(
 
     fun appendToFile(record: String) {
         file.appendBytes(record.toByteArray())
+    }
+
+    fun readFromTillLineEnd(physicalLocationOfMessage: Long): String {
+        val sb = StringBuilder()
+        var filePointer = physicalLocationOfMessage
+
+        this.seek(filePointer)
+        var nextInt = this.readByte().toInt()
+        while (!isEndOfLine(nextInt)) {
+            sb.append(nextInt.toChar())
+            this.seek(++filePointer)
+            nextInt = this.readByte().toInt()
+        }
+
+        println("Message $sb")
+        return sb.toString()
+    }
+
+    private fun isEndOfLine(nextInt: Int) = nextInt == 0xA || nextInt == 0xD
+
+    companion object {
+        fun from(logName: String) = FileIO(File(LOG_FILES_PATH + logName))
     }
 }

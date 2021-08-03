@@ -1,16 +1,15 @@
 package org.techninja.messagebroker.log
 
-import org.springframework.stereotype.Component
 import org.techninja.messagebroker.exceptions.EmptyFileException
 import java.io.File
 
 const val LOG_FILES_PATH = "./logs/"
 
-@Component
-class AppendOnlyLog {
+class AppendOnlyLog(
+    private val fileIO: FileIO
+) {
 
-    fun append(logName: String, data: String) {
-        val fileIO = FileIO(File(LOG_FILES_PATH + logName))
+    fun append(data: String) {
         val currentOffset = try {
             val lastLine = fileIO.getLastLine()
             Record.from(lastLine).offset + 1
@@ -29,6 +28,11 @@ class AppendOnlyLog {
     fun create(logName: String): Boolean {
         return File(LOG_FILES_PATH + logName).createNewFile()
     }
+
+    fun readMessageFrom(physicalLocationOfMessage: Long): String {
+
+        return fileIO.readFromTillLineEnd(physicalLocationOfMessage)
+    }
 }
 
 data class Record(
@@ -38,10 +42,12 @@ data class Record(
 
     companion object {
         fun from(data: String): Record {
-            val indexOfFirst = data.indexOfFirst { it == ' ' }
-            val offset = data.subSequence(0, indexOfFirst).toString().toLong()
-            val payload = data.subSequence(indexOfFirst + 1, data.length).toString()
-            return Record(offset = offset, payload = payload)
+
+            return data.split(" ").let {
+                val offset = it.first().toLong()
+                val payload = it.subList(1, it.size).joinToString(" ")
+                Record(offset = offset, payload = payload)
+            }
         }
     }
 }
