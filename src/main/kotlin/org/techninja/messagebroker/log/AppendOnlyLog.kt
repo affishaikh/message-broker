@@ -1,17 +1,17 @@
 package org.techninja.messagebroker.log
 
 import org.techninja.messagebroker.exceptions.EmptyFileException
+import org.techninja.messagebroker.service.FileIOService
 import java.io.File
 
 const val LOG_FILES_PATH = "./logs/"
 
-class AppendOnlyLog(
-    private val fileIO: FileIO
-) {
+class AppendOnlyLog(name: String) {
+    private val fileIOService: FileIOService = FileIOService("${LOG_FILES_PATH}$name")
 
     fun append(data: String) {
         val currentOffset = try {
-            val lastLine = fileIO.getLastLine()
+            val lastLine = fileIOService.getLastLine()
             Record.from(lastLine).offset + 1
         } catch (e: EmptyFileException) {
             0
@@ -22,7 +22,7 @@ class AppendOnlyLog(
         } else {
             "\n$currentOffset $data"
         }
-        fileIO.appendToFile(record)
+        fileIOService.appendToFile(record)
     }
 
     fun create(logName: String): Boolean {
@@ -31,7 +31,7 @@ class AppendOnlyLog(
 
     fun readMessageFrom(physicalLocationOfMessage: Long): String {
 
-        return fileIO.readFromTillLineEnd(physicalLocationOfMessage)
+        return fileIOService.readFromPhysicalLocationTillLineEnd(physicalLocationOfMessage)
     }
 }
 

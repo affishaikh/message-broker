@@ -1,12 +1,10 @@
-package org.techninja.messagebroker.log
+package org.techninja.messagebroker.service
 
 import org.techninja.messagebroker.exceptions.EmptyFileException
-import java.io.File
+import org.techninja.messagebroker.log.LOG_FILES_PATH
 import java.io.RandomAccessFile
 
-class FileIO(
-    private val file: File
-) : RandomAccessFile(file, "r") {
+class FileIOService(fileName: String) : RandomAccessFile(fileName, "rw") {
 
     fun getLastLine(): String {
         val fileLength = this.length() - 1
@@ -32,10 +30,11 @@ class FileIO(
     }
 
     fun appendToFile(record: String) {
-        file.appendBytes(record.toByteArray())
+        this.seek(this.length() - 1)
+        this.writeBytes(record)
     }
 
-    fun readFromTillLineEnd(physicalLocationOfMessage: Long): String {
+    fun readFromPhysicalLocationTillLineEnd(physicalLocationOfMessage: Long): String {
         val sb = StringBuilder()
         var filePointer = physicalLocationOfMessage
 
@@ -54,6 +53,6 @@ class FileIO(
     private fun isEndOfLine(nextInt: Int) = nextInt == 0xA || nextInt == 0xD
 
     companion object {
-        fun from(logName: String) = FileIO(File(LOG_FILES_PATH + logName))
+        fun from(logName: String) = FileIOService(LOG_FILES_PATH + logName)
     }
 }

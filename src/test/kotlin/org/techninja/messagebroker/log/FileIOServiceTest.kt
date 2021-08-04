@@ -4,13 +4,13 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 import org.techninja.messagebroker.exceptions.EmptyFileException
-import java.io.File
+import org.techninja.messagebroker.service.FileIOService
 
-class FileIOTest {
+class FileIOServiceTest {
 
     @Test
     fun `should throw empty file exception`() {
-        val fileIO = FileIO(File("./src/test/resources/logs/emptyLogFile"))
+        val fileIO = FileIOService("./src/test/resources/logs/emptyLogFile")
 
         shouldThrow<EmptyFileException> {
             fileIO.getLastLine()
@@ -19,8 +19,8 @@ class FileIOTest {
 
     @Test
     fun `should read the next line`() {
-        val fileIO = FileIO(File("./src/test/resources/logs/someLogs"))
+        val fileIO = FileIOService("./src/test/resources/logs/someLogs")
 
-        fileIO.readFromTillLineEnd(17) shouldBe "hello world!"
+        fileIO.readFromPhysicalLocationTillLineEnd(17) shouldBe "hello world!"
     }
 }

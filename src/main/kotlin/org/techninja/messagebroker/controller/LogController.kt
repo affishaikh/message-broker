@@ -2,11 +2,7 @@ package org.techninja.messagebroker.controller
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
-import org.techninja.messagebroker.log.AppendOnlyLog
-import org.techninja.messagebroker.log.FileIO
-import org.techninja.messagebroker.log.LOG_FILES_PATH
 import org.techninja.messagebroker.service.LogService
-import java.io.File
 
 @RestController
 class LogController(
@@ -15,7 +11,7 @@ class LogController(
 
     @PostMapping("/log")
     fun create(@RequestBody createLogView: CreateLogView): Boolean {
-        return File(LOG_FILES_PATH + createLogView.logName).createNewFile()
+        return logService.createLog(createLogView.logName)
     }
 
     @PostMapping("/log/{logName}/append")
@@ -23,9 +19,8 @@ class LogController(
         @RequestBody appendToLogView: AppendToLogView,
         @PathVariable logName: String
     ) {
-        val appendOnlyLog = AppendOnlyLog(FileIO.from(logName))
 
-        return appendOnlyLog.append(appendToLogView.payload)
+        return logService.appendToLog(logName, appendToLogView.payload)
     }
 
     @GetMapping("/log/{logName}/{offset}")

@@ -7,7 +7,7 @@ class RecordTest {
 
     @Test
     fun `should return the record`() {
-        val data = "6 0 New data 1"
+        val data = "6 New data 1"
 
         Record.from(data) shouldBe Record(6, "New data 1")
     }
