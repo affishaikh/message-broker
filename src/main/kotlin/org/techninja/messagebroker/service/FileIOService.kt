@@ -1,8 +1,10 @@
 package org.techninja.messagebroker.service
 
 import org.techninja.messagebroker.exceptions.EmptyFileException
-import org.techninja.messagebroker.log.LOG_FILES_PATH
 import java.io.RandomAccessFile
+
+const val NEW_LINE_CHARACTER = '\n'
+const val CARRIAGE_RETURN_CHARACTER = '\r'
 
 class FileIOService(fileName: String) : RandomAccessFile(fileName, "rw") {
 
@@ -29,30 +31,36 @@ class FileIOService(fileName: String) : RandomAccessFile(fileName, "rw") {
         return sb.reverse().toString()
     }
 
-    fun appendToFile(record: String) {
-        this.seek(this.length() - 1)
-        this.writeBytes(record)
+    fun appendToFile(data: String): Long {
+        val filePointer = this.length()
+        if (filePointer < 0)
+            this.seek(0)
+        else
+            this.seek(filePointer)
+
+        this.writeBytes(data)
+        return filePointer
     }
 
     fun readFromPhysicalLocationTillLineEnd(physicalLocationOfMessage: Long): String {
-        val sb = StringBuilder()
+        val data = StringBuilder()
         var filePointer = physicalLocationOfMessage
 
+        do {
+            val nextInt = readCharAt(filePointer)
+            data.append(nextInt)
+            ++filePointer
+        } while (!isEOF(filePointer) && !isEndOfLine(readCharAt(filePointer)))
+
+        return data.toString()
+    }
+
+    private fun isEOF(filePointer: Long) = this.length() == filePointer
+
+    private fun readCharAt(filePointer: Long): Char {
         this.seek(filePointer)
-        var nextInt = this.readByte().toInt()
-        while (!isEndOfLine(nextInt)) {
-            sb.append(nextInt.toChar())
-            this.seek(++filePointer)
-            nextInt = this.readByte().toInt()
-        }
-
-        println("Message $sb")
-        return sb.toString()
+        return this.readByte().toChar()
     }
 
-    private fun isEndOfLine(nextInt: Int) = nextInt == 0xA || nextInt == 0xD
-
-    companion object {
-        fun from(logName: String) = FileIOService(LOG_FILES_PATH + logName)
-    }
+    private fun isEndOfLine(character: Char) = character == NEW_LINE_CHARACTER || character == CARRIAGE_RETURN_CHARACTER
 }

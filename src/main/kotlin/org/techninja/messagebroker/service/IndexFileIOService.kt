@@ -1,23 +1,20 @@
 package org.techninja.messagebroker.service
 
 import org.techninja.messagebroker.log.LOG_FILES_PATH
-import java.io.RandomAccessFile
 
-const val SIZE_OF_OFFSET = 2
+const val SIZE_OF_OFFSET = 8
 
 class IndexFileIOService(
-    fileName: String
-) : RandomAccessFile("$LOG_FILES_PATH$fileName.index", "r") {
+    logName: String,
+) {
+    private val fileIOService: FileIOService = FileIOService("$LOG_FILES_PATH$logName.index")
 
     fun getPhysicalLocationFor(offset: Long): Long {
 
-        val physicalLocation = (SIZE_OF_OFFSET + 1) * ((offset + 1) * 2 - 1)
-        val sb = StringBuilder()
-        for (filePointer in (physicalLocation..(physicalLocation + (SIZE_OF_OFFSET - 1)))) {
-            this.seek(filePointer)
-            sb.append(this.readByte().toInt().toChar())
-        }
+        val physicalLocation = getPhysicalLocationOfOffset(offset)
 
-        return sb.toString().toLong()
+        return fileIOService.readFromPhysicalLocationTillLineEnd(physicalLocation).toLong()
     }
+
+    private fun getPhysicalLocationOfOffset(offset: Long) = (SIZE_OF_OFFSET + 1) * ((offset + 1) * 2 - 1)
 }

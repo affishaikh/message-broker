@@ -25,7 +25,8 @@ class LogService {
         return appendOnlyLog.append(payload)
     }
 
-    fun createLog(logName: String): Boolean {
-        return File(LOG_FILES_PATH + logName).createNewFile()
+    fun createLog(logName: String) {
+        File("$LOG_FILES_PATH$logName").createNewFile()
+        File("$LOG_FILES_PATH$logName.index").createNewFile()
     }
 }

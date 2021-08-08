@@ -10,7 +10,7 @@ class LogController(
 ) {
 
     @PostMapping("/log")
-    fun create(@RequestBody createLogView: CreateLogView): Boolean {
+    fun create(@RequestBody createLogView: CreateLogView) {
         return logService.createLog(createLogView.logName)
     }
 
