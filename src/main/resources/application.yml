@@ -1,0 +1,11 @@
+server:
+  port: ${BROKER_PORT}
+
+message-broker:
+  broker-config:
+    broker-id: ${BROKER_ID}
+    host: ${BROKER_HOST}
+    port: ${BROKER_PORT}
+
+  zookeeper-config:
+    ensemble-connection-string: ${ENSEMBLE_CONNECTION_STRING}

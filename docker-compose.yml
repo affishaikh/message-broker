@@ -1,0 +1,81 @@
+version: '3.7'
+
+services:
+  broker1:
+    image: message-broker:latest
+    container_name: broker1
+    restart: on-failure
+    depends_on:
+      - zoo1
+    environment:
+      - BROKER_PORT=8080
+      - BROKER_ID=1
+      - BROKER_HOST=broker1
+      - ENSEMBLE_CONNECTION_STRING=zoo1:2181
+    ports:
+      - 8080:8080
+    networks:
+      - broker-network
+
+  broker2:
+    image: message-broker:latest
+    container_name: broker2
+    restart: on-failure
+    depends_on:
+      - zoo1
+    environment:
+      - BROKER_PORT=8081
+      - BROKER_ID=2
+      - BROKER_HOST=broker2
+      - ENSEMBLE_CONNECTION_STRING=zoo1:2181
+    ports:
+      - 8081:8081
+    networks:
+      - broker-network
+
+  zoo1:
+    image: zookeeper
+    container_name: zoo1
+    restart: always
+    hostname: zoo1
+    ports:
+      - 2181:2181
+    environment:
+      ZOO_MY_ID: 1
+      ZOO_SERVERS: server.1=zoo1:2888:3888;2181 server.2=zoo2:2888:3888;2181 server.3=zoo3:2888:3888;2181
+    networks:
+      - broker-network
+
+  zoo2:
+    image: zookeeper
+    container_name: zoo2
+    restart: always
+    hostname: zoo2
+    ports:
+      - 2182:2181
+    environment:
+      ZOO_MY_ID: 2
+      ZOO_SERVERS: server.1=zoo1:2888:3888;2181 server.2=zoo2:2888:3888;2181 server.3=zoo3:2888:3888;2181
+    networks:
+      - broker-network
+
+  zoo3:
+    image: zookeeper
+    container_name: zoo3
+    restart: always
+    hostname: zoo3
+    ports:
+      - 2183:2181
+    environment:
+      ZOO_MY_ID: 3
+      ZOO_SERVERS: server.1=zoo1:2888:3888;2181 server.2=zoo2:2888:3888;2181 server.3=zoo3:2888:3888;2181
+    networks:
+      - broker-network
+
+networks:
+  broker-network:
+    name: broker-network
+
+volumes:
+  thanos-volume:
+    name: broker-volume
