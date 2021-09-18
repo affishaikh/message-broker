@@ -1,14 +1,13 @@
 package org.techninja.messagebroker.log
 
 import org.techninja.messagebroker.exceptions.EmptyFileException
+import org.techninja.messagebroker.service.Constants
+import org.techninja.messagebroker.service.Constants.SIZE_OF_OFFSET
 import org.techninja.messagebroker.service.FileIOService
-import org.techninja.messagebroker.service.SIZE_OF_OFFSET
-
-const val LOG_FILES_PATH = "./logs/"
 
 class AppendOnlyLog(name: String) {
-    private val logFile: FileIOService = FileIOService("${LOG_FILES_PATH}$name")
-    private val indexFile: FileIOService = FileIOService("${LOG_FILES_PATH}$name.index")
+    private val logFile: FileIOService = FileIOService("${Constants.LOG_FILES_PATH}$name")
+    private val indexFile: FileIOService = FileIOService("${Constants.LOG_FILES_PATH}$name.index")
 
     fun append(data: String) {
         val currentOffset = try {

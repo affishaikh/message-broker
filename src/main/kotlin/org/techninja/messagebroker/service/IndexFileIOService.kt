@@ -1,8 +1,7 @@
 package org.techninja.messagebroker.service
 
-import org.techninja.messagebroker.log.LOG_FILES_PATH
-
-const val SIZE_OF_OFFSET = 8
+import org.techninja.messagebroker.service.Constants.LOG_FILES_PATH
+import org.techninja.messagebroker.service.Constants.SIZE_OF_OFFSET
 
 class IndexFileIOService(
     logName: String,
@@ -10,7 +9,6 @@ class IndexFileIOService(
     private val fileIOService: FileIOService = FileIOService("$LOG_FILES_PATH$logName.index")
 
     fun getPhysicalLocationFor(offset: Long): Long {
-
         val physicalLocation = getPhysicalLocationOfOffset(offset)
 
         return fileIOService.readFromPhysicalLocationTillLineEnd(physicalLocation).toLong()

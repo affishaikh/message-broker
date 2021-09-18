@@ -2,7 +2,7 @@ package org.techninja.messagebroker.service
 
 import org.springframework.stereotype.Component
 import org.techninja.messagebroker.log.AppendOnlyLog
-import org.techninja.messagebroker.log.LOG_FILES_PATH
+import org.techninja.messagebroker.service.Constants.LOG_FILES_PATH
 import java.io.File
 
 @Component

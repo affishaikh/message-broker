@@ -25,6 +25,8 @@ dependencies {
 	implementation("com.101tec:zkclient:0.11")
 	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
 	implementation("org.springframework.boot:spring-boot-devtools:2.5.3")
+	implementation("net.logstash.logback:logstash-logback-encoder:6.3")
+	implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.10.5")
 
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("io.projectreactor:reactor-test")
