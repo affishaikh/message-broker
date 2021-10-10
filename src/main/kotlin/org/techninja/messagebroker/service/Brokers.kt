@@ -30,4 +30,6 @@ class Brokers(
         availableBrokers.removeIf { removedBrokerIds.contains(it.id.toString()) }
         logger.info("Removed brokers are $removedBrokerIds. All brokers ${currentBrokerIds()}")
     }
+
+    fun getAvailableBrokers() = availableBrokers.toList()
 }

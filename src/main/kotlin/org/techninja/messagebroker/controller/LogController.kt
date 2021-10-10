@@ -3,6 +3,7 @@ package org.techninja.messagebroker.controller
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
 import org.techninja.messagebroker.service.LogService
+import reactor.core.publisher.Mono
 
 @RestController
 class LogController(
@@ -10,7 +11,7 @@ class LogController(
 ) {
 
     @PostMapping("/log")
-    fun create(@RequestBody createLogView: CreateLogView) {
+    fun create(@RequestBody createLogView: CreateLogView): Mono<String> {
         return logService.createLog(createLogView.logName)
     }
 
@@ -18,8 +19,7 @@ class LogController(
     fun append(
         @RequestBody appendToLogView: AppendToLogView,
         @PathVariable logName: String
-    ) {
-
+    ): Mono<String> {
         return logService.appendToLog(logName, appendToLogView.payload)
     }
 

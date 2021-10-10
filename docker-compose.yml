@@ -4,7 +4,7 @@ services:
   broker1:
     image: message-broker:latest
     container_name: broker1
-    restart: on-failure
+#    restart: on-failure
     depends_on:
       - zoo1
     environment:
@@ -20,7 +20,7 @@ services:
   broker2:
     image: message-broker:latest
     container_name: broker2
-    restart: on-failure
+#    restart: on-failure
     depends_on:
       - zoo1
     environment:
@@ -76,6 +76,6 @@ networks:
   broker-network:
     name: broker-network
 
-volumes:
-  thanos-volume:
-    name: broker-volume
+#volumes:
+#  thanos-volume:
+#    name: broker-volume
